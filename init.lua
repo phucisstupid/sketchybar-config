@@ -111,8 +111,8 @@ WINDOW_MANAGER = config.window_manager
 PRESET = config.bar_preset
 PRESET_OPTIONS = config.bar_presets
 FONT = {
-  nerd_font = config.fonts.nerd_font,
-  numbers = config.fonts.numbers_font,
+  label = config.fonts.label,
+  icon = config.fonts.icon,
   style_map = config.fonts.style_map,
 }
 MODULES = {}
