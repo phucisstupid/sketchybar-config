@@ -34,8 +34,8 @@ return {
 
   -- Font configuration
   fonts = {
-    nerd_font = "Maple Mono NF",
-    numbers_font = "Maple Mono NF",
+    icon_font = "Maple Mono NF",
+    label_font = "Maple Mono NF",
     style_map = {
       ["Regular"] = "Regular",
       ["Semibold"] = "Medium",
