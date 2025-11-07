@@ -34,8 +34,8 @@ return {
 
   -- Font configuration
   fonts = {
-    icon_font = "Maple Mono NF",
-    label_font = "Maple Mono NF",
+    icon = "Maple Mono NF",
+    label = "Maple Mono NF",
     style_map = {
       ["Regular"] = "Regular",
       ["Semibold"] = "Medium",
