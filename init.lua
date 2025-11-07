@@ -22,8 +22,8 @@ local defaults = {
 
   -- Font configuration
   fonts = {
-    icon_font = "Maple Mono NF",
-    label_font = "Maple Mono NF",
+    icon = "Maple Mono NF",
+    label = "Maple Mono NF",
     style_map = {
       ["Regular"] = "Regular",
       ["Semibold"] = "Medium",
@@ -193,13 +193,13 @@ SBAR.default({
   padding_left = PADDINGS,
   padding_right = PADDINGS,
   icon = {
-    font = { family = FONT.icon_font, style = FONT.style_map["Bold"], size = STYLE.FONT_SIZE_ICON },
+    font = { family = FONT.icon, style = FONT.style_map["Bold"], size = STYLE.FONT_SIZE_ICON },
     color = COLORS.text,
     padding_left = PADDINGS,
     padding_right = PADDINGS,
   },
   label = {
-    font = { family = FONT.label_font, style = FONT.style_map["Bold"], size = STYLE.FONT_SIZE_LABEL },
+    font = { family = FONT.label, style = FONT.style_map["Bold"], size = STYLE.FONT_SIZE_LABEL },
     color = COLORS.text,
     padding_left = PADDINGS,
     padding_right = PADDINGS,
