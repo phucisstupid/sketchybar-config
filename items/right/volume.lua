@@ -17,6 +17,38 @@ local volume_icon = SBAR.add("item", "widgets.volume", {
   } or { drawing = false },
 })
 
+local volume_hover = false
+local schedule_hide
+
+local function volume_collapse_details()
+  local query = volume_icon:query()
+  if query.popup and query.popup.drawing == "on" then
+    volume_icon:set({ popup = { drawing = false } })
+    SBAR.remove("/volume.device\\.*/")
+  end
+  volume_hover = false
+end
+
+schedule_hide = function()
+  SBAR.delay(0.2, function()
+    if not volume_hover then volume_collapse_details() end
+  end)
+end
+
+local function attach_popup_hover(item)
+  item:subscribe("mouse.entered", function()
+    volume_hover = true
+  end)
+  item:subscribe("mouse.exited", function()
+    volume_hover = false
+    schedule_hide()
+  end)
+  item:subscribe("mouse.exited.global", function()
+    volume_hover = false
+    schedule_hide()
+  end)
+end
+
 local volume_slider = SBAR.add("slider", popup_width, {
   position = "popup." .. volume_icon.name,
   slider = {
@@ -30,15 +62,7 @@ local volume_slider = SBAR.add("slider", popup_width, {
   background = { color = COLORS.base, height = 2, y_offset = -20 },
   click_script = 'osascript -e "set volume output volume $PERCENTAGE"',
 })
-volume_slider:subscribe("mouse.entered", function()
-  volume_hover = true
-end)
-volume_slider:subscribe("mouse.exited", function()
-  volume_hover = false
-  SBAR.delay(0.2, function()
-    if not volume_hover then volume_collapse_details() end
-  end)
-end)
+attach_popup_hover(volume_slider)
 
 -- Icon selection based on volume percentage
 local function get_volume_icon(volume)
@@ -95,14 +119,6 @@ volume_icon:subscribe("volume_change", function(env)
   update_volume(volume)
 end)
 
-local function volume_collapse_details()
-  local query = volume_icon:query()
-  if query.popup and query.popup.drawing == "on" then
-    volume_icon:set({ popup = { drawing = false } })
-    SBAR.remove("/volume.device\\.*/")
-  end
-end
-
 local current_audio_device = "None"
 local function volume_toggle_details(env)
   if env.BUTTON == "right" then
@@ -139,15 +155,7 @@ local function volume_toggle_details(env)
               COLORS.text
             ),
           })
-          device_item:subscribe("mouse.entered", function()
-            volume_hover = true
-          end)
-          device_item:subscribe("mouse.exited", function()
-            volume_hover = false
-            SBAR.delay(0.2, function()
-              if not volume_hover then volume_collapse_details() end
-            end)
-          end)
+          attach_popup_hover(device_item)
           counter = counter + 1
         end
       end)
@@ -175,7 +183,6 @@ SBAR.exec('osascript -e "output volume of (get volume settings)"', function(resu
   end
 end)
 
-local volume_hover = false
 volume_icon:subscribe("mouse.entered", function(env)
   volume_hover = true
   local query = volume_icon:query()
@@ -185,9 +192,7 @@ volume_icon:subscribe("mouse.entered", function(env)
 end)
 volume_icon:subscribe("mouse.exited", function()
   volume_hover = false
-  SBAR.delay(0.2, function()
-    if not volume_hover then volume_collapse_details() end
-  end)
+  schedule_hide()
 end)
 volume_icon:subscribe("mouse.exited.global", function()
   volume_hover = false

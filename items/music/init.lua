@@ -29,6 +29,37 @@ local music_anchor = SBAR.add("item", "music.anchor", {
   },
 })
 
+local music_hover = false
+local schedule_hide
+
+local function hide_music_popup()
+  local query = music_anchor:query()
+  if query.popup and query.popup.drawing == "on" then
+    music_anchor:set({ popup = { drawing = false } })
+  end
+  music_hover = false
+end
+
+schedule_hide = function()
+  SBAR.delay(0.2, function()
+    if not music_hover then hide_music_popup() end
+  end)
+end
+
+local function attach_popup_hover(item)
+  item:subscribe("mouse.entered", function()
+    music_hover = true
+  end)
+  item:subscribe("mouse.exited", function()
+    music_hover = false
+    schedule_hide()
+  end)
+  item:subscribe("mouse.exited.global", function()
+    music_hover = false
+    schedule_hide()
+  end)
+end
+
 local albumart = SBAR.add("item", "music.cover", {
   position = "popup." .. music_anchor.name,
   label = { drawing = false },
@@ -41,6 +72,7 @@ local albumart = SBAR.add("item", "music.cover", {
     },
   },
 })
+attach_popup_hover(albumart)
 
 local track_title = SBAR.add("item", "music.title", {
   position = "popup." .. music_anchor.name,
@@ -57,6 +89,7 @@ local track_title = SBAR.add("item", "music.title", {
   },
   y_offset = 80 + Y_OFFSET,
 })
+attach_popup_hover(track_title)
 
 local track_artist = SBAR.add("item", "music.artist", {
   position = "popup." .. music_anchor.name,
@@ -71,6 +104,7 @@ local track_artist = SBAR.add("item", "music.artist", {
     color = COLORS.blue,
   },
 })
+attach_popup_hover(track_artist)
 
 local track_album = SBAR.add("item", "music.album", {
   position = "popup." .. music_anchor.name,
@@ -84,6 +118,7 @@ local track_album = SBAR.add("item", "music.album", {
     color = COLORS.lavender,
   },
 })
+attach_popup_hover(track_album)
 
 -- #region Playback Controls
 local CONTROLS_Y_OFFSET = -55 + Y_OFFSET
@@ -100,6 +135,7 @@ local music_shuffle = SBAR.add("item", "music.shuffle", {
   label = { drawing = false },
   y_offset = CONTROLS_Y_OFFSET,
 })
+attach_popup_hover(music_shuffle)
 
 local music_prev = SBAR.add("item", "music.back", {
   position = "popup." .. music_anchor.name,
@@ -112,6 +148,7 @@ local music_prev = SBAR.add("item", "music.back", {
   label = { drawing = false },
   y_offset = CONTROLS_Y_OFFSET,
 })
+attach_popup_hover(music_prev)
 
 local music_play = SBAR.add("item", "music.play", {
   position = "popup." .. music_anchor.name,
@@ -134,6 +171,7 @@ local music_play = SBAR.add("item", "music.play", {
   label = { drawing = false },
   y_offset = CONTROLS_Y_OFFSET,
 })
+attach_popup_hover(music_play)
 
 local music_next = SBAR.add("item", "music.next", {
   position = "popup." .. music_anchor.name,
@@ -146,6 +184,7 @@ local music_next = SBAR.add("item", "music.next", {
   label = { drawing = false },
   y_offset = CONTROLS_Y_OFFSET,
 })
+attach_popup_hover(music_next)
 
 local music_repeat = SBAR.add("item", "music.repeat", {
   position = "popup." .. music_anchor.name,
@@ -159,6 +198,7 @@ local music_repeat = SBAR.add("item", "music.repeat", {
   label = { drawing = false },
   y_offset = CONTROLS_Y_OFFSET,
 })
+attach_popup_hover(music_repeat)
 
 SBAR.add("item", "music.spacer", {
   position = "popup." .. music_anchor.name,
@@ -270,6 +310,23 @@ music_anchor:subscribe("media_change", function(env)
   end
 end)
 
+music_anchor:subscribe("mouse.entered", function()
+  music_hover = true
+  local query = music_anchor:query()
+  if not query.popup or query.popup.drawing == "off" then
+    music_anchor:set({ popup = { drawing = true } })
+    client.update_album_art(albumart_updater)
+    client.stats(icon_updater)
+  end
+end)
+music_anchor:subscribe("mouse.exited", function()
+  music_hover = false
+  schedule_hide()
+end)
+music_anchor:subscribe("mouse.exited.global", function()
+  music_hover = false
+  hide_music_popup()
+end)
 music_anchor:subscribe("mouse.clicked", function()
   music_anchor:set({ popup = { drawing = "toggle" } })
   client.update_album_art(albumart_updater)
