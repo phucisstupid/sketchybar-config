@@ -1,10 +1,8 @@
 local menu_watcher = SBAR.add('item', {
-  position = 'left',
   drawing = false,
   updates = false,
 })
 local space_menu_swap = SBAR.add('item', {
-  position = 'left',
   drawing = false,
   updates = true,
 })
