@@ -1,7 +1,7 @@
 local defaults = {
   -- Global bar configuration
-  window_manager = "macos_native",
-  bar_preset = "default",
+  window_manager = 'macos_native',
+  bar_preset = 'default',
 
   bar_presets = {
     default = {
@@ -22,13 +22,13 @@ local defaults = {
 
   -- Font configuration
   fonts = {
-    icon = "Maple Mono NF",
-    label = "Maple Mono NF",
+    icon = 'Maple Mono NF',
+    label = 'Maple Mono NF',
     style_map = {
-      ["Regular"] = "Regular",
-      ["Semibold"] = "Medium",
-      ["Bold"] = "Bold",
-      ["Black"] = "ExtraBold",
+      ['Regular'] = 'Regular',
+      ['Semibold'] = 'Medium',
+      ['Bold'] = 'Bold',
+      ['Black'] = 'ExtraBold',
     },
   },
 
@@ -48,10 +48,10 @@ local defaults = {
     front_app = { enabled = true },
     calendar = { enabled = true },
     brew = { enabled = true },
-    battery = { enabled = true, style = "both" }, -- Options: "icon", "text", or "both"
-    wifi = { enabled = true, style = "both" }, -- Options: "icon", "text", or "both"
+    battery = { enabled = true, style = 'both' }, -- Options: "icon", "text", or "both"
+    wifi = { enabled = true, style = 'both' }, -- Options: "icon", "text", or "both"
     network = { enabled = true },
-    volume = { enabled = true, style = "both" }, -- Options: "icon", "text", or "both"
+    volume = { enabled = true, style = 'both' }, -- Options: "icon", "text", or "both"
     toggle_stats = { enabled = true },
     cpu = { enabled = true },
     memory = { enabled = true },
@@ -60,23 +60,23 @@ local defaults = {
 
   -- Module-specific settings
   workspace = {
-    label_style = "greek_uppercase", -- Options: "greek_uppercase", "greek_lowercase", or nil for numbers
+    label_style = 'greek_uppercase', -- Options: "greek_uppercase", "greek_lowercase", or nil for numbers
   },
 
   music = {
     title_max_length = 20,
-    default_artist = "Various Artists",
-    default_album = "No Album",
+    default_artist = 'Various Artists',
+    default_album = 'No Album',
   },
 
   network = {
-    proxy_app = "FlClash",
+    proxy_app = 'FlClash',
   },
 }
 
 local function deep_merge(base, user)
   for key, value in pairs(user) do
-    if type(value) == "table" and type(base[key]) == "table" then
+    if type(value) == 'table' and type(base[key]) == 'table' then
       deep_merge(base[key], value)
     else
       base[key] = value
@@ -85,8 +85,8 @@ local function deep_merge(base, user)
 end
 
 local user_settings = {}
-local loaded, result = pcall(require, "settings")
-if loaded and type(result) == "table" then
+local loaded, result = pcall(require, 'settings')
+if loaded and type(result) == 'table' then
   user_settings = result
 end
 
@@ -99,9 +99,9 @@ deep_merge(config, user_settings)
 -- Normalize modules
 if config.modules then
   for name, module in pairs(config.modules) do
-    if type(module) == "boolean" then
+    if type(module) == 'boolean' then
       config.modules[name] = { enabled = module }
-    elseif type(module) == "table" and module.enabled == nil then
+    elseif type(module) == 'table' and module.enabled == nil then
       module.enabled = true
     end
   end
@@ -134,13 +134,13 @@ PADDINGS = config.spacing.item_padding
 GROUP_PADDINGS = config.spacing.group_padding
 MENU_ITEM_PADDINGS = config.spacing.menu_padding
 
-SBAR = require("sketchybar")
-COLORS = require("colors")
-ICONS = require("icons")
+SBAR = require('sketchybar')
+COLORS = require('colors')
+ICONS = require('icons')
 
 SBAR.begin_config()
 
-local preset = PRESET_OPTIONS[PRESET] or PRESET_OPTIONS["default"]
+local preset = PRESET_OPTIONS[PRESET] or PRESET_OPTIONS['default']
 
 -- Global style constants
 STYLE = {
@@ -193,13 +193,13 @@ SBAR.default({
   padding_left = PADDINGS,
   padding_right = PADDINGS,
   icon = {
-    font = { family = FONT.icon, style = FONT.style_map["Bold"], size = STYLE.FONT_SIZE_ICON },
+    font = { family = FONT.icon, style = FONT.style_map['Bold'], size = STYLE.FONT_SIZE_ICON },
     color = COLORS.text,
     padding_left = PADDINGS,
     padding_right = PADDINGS,
   },
   label = {
-    font = { family = FONT.label, style = FONT.style_map["Bold"], size = STYLE.FONT_SIZE_LABEL },
+    font = { family = FONT.label, style = FONT.style_map['Bold'], size = STYLE.FONT_SIZE_LABEL },
     color = COLORS.text,
     padding_left = PADDINGS,
     padding_right = PADDINGS,
@@ -211,7 +211,7 @@ SBAR.default({
     border_color = COLORS.surface1,
   },
   popup = {
-    align = "center",
+    align = 'center',
     background = {
       border_width = STYLE.BORDER_WIDTH,
       corner_radius = STYLE.POPUP_CORNER_RADIUS,
@@ -222,7 +222,7 @@ SBAR.default({
   scroll_texts = true,
 })
 
-require("items")
+require('items')
 
 SBAR.end_config()
 SBAR.event_loop()

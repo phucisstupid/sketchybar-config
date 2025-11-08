@@ -18,14 +18,14 @@ return {
   lavender = 0xffb4befe,
 
   -- Text colors
-  text = 0xffcdd6f4,        -- Primary text
-  subtext1 = 0xffbac2de,    -- Secondary text
-  subtext0 = 0xffa6adc8,    -- Tertiary text
+  text = 0xffcdd6f4, -- Primary text
+  subtext1 = 0xffbac2de, -- Secondary text
+  subtext0 = 0xffa6adc8, -- Tertiary text
 
   -- Overlay colors (for borders, inactive states)
   overlay2 = 0xff9399b2,
   overlay1 = 0xff7f849c,
-  overlay0 = 0xff6c7086,    -- Use this instead of 'grey'
+  overlay0 = 0xff6c7086, -- Use this instead of 'grey'
 
   -- Surface colors (for backgrounds)
   surface2 = 0xff585b70,
@@ -33,9 +33,9 @@ return {
   surface0 = 0xff313244,
 
   -- Base colors (for main backgrounds)
-  base = 0xff1e1e2e,        -- Main bar background
-  mantle = 0xff181825,      -- Secondary background
-  crust = 0xff11111b,       -- Darkest background
+  base = 0xff1e1e2e, -- Main bar background
+  mantle = 0xff181825, -- Secondary background
+  crust = 0xff11111b, -- Darkest background
 
   -- Utility
   transparent = 0x00000000,

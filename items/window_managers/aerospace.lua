@@ -1,34 +1,36 @@
 -- Aerospace window manager implementation
 -- Based on working implementation from: https://github.com/falleco/dotfiles/blob/main/sketchybar
-local app_icons = require("helpers.spaces_util.icon_map")
+local app_icons = require('helpers.spaces_util.icon_map')
 
 -- Prefer a plain-text, line-based format for synchronous parsing
-local SYNC_WS_CMD = "aerospace list-workspaces --all --format '%{workspace}|%{monitor-appkit-nsscreen-screens-id}'"
+local SYNC_WS_CMD =
+  "aerospace list-workspaces --all --format '%{workspace}|%{monitor-appkit-nsscreen-screens-id}'"
 local ASYNC_WS_CMD =
   "aerospace list-workspaces --all --format '%{workspace}%{monitor-appkit-nsscreen-screens-id}' --json"
 
 local Window_Manager = {
   spaces = {}, -- Keyed by workspace index (e.g., "A", "1", etc.)
   events = {
-    focus_change = "aerospace_workspace_change",
-    focus_event = "aerospace_focus_change",
+    focus_change = 'aerospace_workspace_change',
+    focus_event = 'aerospace_focus_change',
   },
 }
 
 -- Fetch workspace data and update windows
 local function with_windows_data(callback)
   local open_windows = {}
-  local get_windows = "aerospace list-windows --monitor all --format '%{workspace}%{app-name}' --json"
+  local get_windows =
+    "aerospace list-windows --monitor all --format '%{workspace}%{app-name}' --json"
   local query_visible_workspaces =
     "aerospace list-workspaces --visible --monitor all --format '%{workspace}%{monitor-appkit-nsscreen-screens-id}' --json"
-  local get_focused_workspaces = "aerospace list-workspaces --focused"
+  local get_focused_workspaces = 'aerospace list-workspaces --focused'
 
   SBAR.exec(query_visible_workspaces, function(visible_workspaces)
     SBAR.exec(get_windows, function(workspace_and_windows)
       if workspace_and_windows then
         for _, entry in ipairs(workspace_and_windows) do
           local workspace_index = entry.workspace
-          local app_name = entry["app-name"]
+          local app_name = entry['app-name']
 
           if open_windows[workspace_index] == nil then
             open_windows[workspace_index] = {}
@@ -39,7 +41,7 @@ local function with_windows_data(callback)
       end
 
       SBAR.exec(get_focused_workspaces, function(focused_workspaces)
-        local focused_workspace = focused_workspaces and focused_workspaces:match("^%s*(.-)%s*$")
+        local focused_workspace = focused_workspaces and focused_workspaces:match('^%s*(.-)%s*$')
         callback({
           open_windows = open_windows,
           focused_workspace = focused_workspace,
@@ -70,11 +72,11 @@ function Window_Manager:update_workspace(workspace_index, args)
   -- Build icon line from apps
   local icon_parts = {}
   for _, app_name in ipairs(open_windows) do
-    local icon = app_icons[app_name] or app_icons["default"]
-    table.insert(icon_parts, " " .. icon)
+    local icon = app_icons[app_name] or app_icons['default']
+    table.insert(icon_parts, ' ' .. icon)
   end
 
-  local icon_line = #icon_parts > 0 and table.concat(icon_parts) or ""
+  local icon_line = #icon_parts > 0 and table.concat(icon_parts) or ''
   local no_app = #open_windows == 0
 
   -- Check if workspace is visible on any monitor
@@ -83,7 +85,7 @@ function Window_Manager:update_workspace(workspace_index, args)
   for _, visible_ws in ipairs(visible_workspaces) do
     if workspace_index == visible_ws.workspace then
       is_visible = true
-      monitor_id = math.floor(visible_ws["monitor-appkit-nsscreen-screens-id"])
+      monitor_id = math.floor(visible_ws['monitor-appkit-nsscreen-screens-id'])
       break
     end
   end
@@ -92,19 +94,22 @@ function Window_Manager:update_workspace(workspace_index, args)
   local is_focused = workspace_index == focused_workspace
 
   -- Update workspace display (animate only focused workspace to avoid all icons jumping)
-  SBAR.animate("tanh", is_focused and 10 or 0, function()
+  SBAR.animate('tanh', is_focused and 10 or 0, function()
     -- Empty workspace but visible
     if no_app and is_visible then
-      icon_line = "—"
+      icon_line = '—'
       workspace:set({
         icon = { drawing = true },
         label = {
           string = icon_line,
           drawing = true,
-          font = "sketchybar-app-font:Regular:16.0",
+          font = 'sketchybar-app-font:Regular:16.0',
           y_offset = -1,
         },
-        background = { drawing = true, border_color = is_focused and COLORS.lavender or COLORS.surface0 },
+        background = {
+          drawing = true,
+          border_color = is_focused and COLORS.lavender or COLORS.surface0,
+        },
         padding_right = 1,
         padding_left = 1,
         display = monitor_id,
@@ -126,13 +131,13 @@ function Window_Manager:update_workspace(workspace_index, args)
 
     -- Empty workspace but focused
     if no_app and workspace_index == focused_workspace then
-      icon_line = "—"
+      icon_line = '—'
       workspace:set({
         icon = { drawing = true },
         label = {
           string = icon_line,
           drawing = true,
-          font = "sketchybar-app-font:Regular:16.0",
+          font = 'sketchybar-app-font:Regular:16.0',
           y_offset = -1,
         },
         background = { drawing = true, border_color = COLORS.lavender },
@@ -148,10 +153,13 @@ function Window_Manager:update_workspace(workspace_index, args)
       label = {
         string = icon_line,
         drawing = true,
-        font = "sketchybar-app-font:Regular:16.0",
+        font = 'sketchybar-app-font:Regular:16.0',
         y_offset = -1,
       },
-      background = { drawing = true, border_color = is_focused and COLORS.lavender or COLORS.surface0 },
+      background = {
+        drawing = true,
+        border_color = is_focused and COLORS.lavender or COLORS.surface0,
+      },
       padding_right = 1,
       padding_left = 1,
       display = monitor_id,
@@ -178,7 +186,7 @@ function Window_Manager:update_workspace_monitors()
     local workspace_monitor = {}
     for _, entry in ipairs(workspaces_and_monitors) do
       local workspace_index = entry.workspace
-      local monitor_id = math.floor(entry["monitor-appkit-nsscreen-screens-id"])
+      local monitor_id = math.floor(entry['monitor-appkit-nsscreen-screens-id'])
       workspace_monitor[workspace_index] = monitor_id
     end
 
@@ -198,13 +206,16 @@ local function get_all_workspaces_sync()
   if not p then
     return {}
   end
-  local content = p:read("*a")
+  local content = p:read('*a')
   p:close()
   local result = {}
-  for line in content:gmatch("([^\r\n]+)") do
-    local ws, id = line:match("^([^|]+)|([%d%.%-]+)$")
+  for line in content:gmatch('([^\r\n]+)') do
+    local ws, id = line:match('^([^|]+)|([%d%.%-]+)$')
     if ws then
-      table.insert(result, { workspace = ws, ["monitor-appkit-nsscreen-screens-id"] = tonumber(id) })
+      table.insert(
+        result,
+        { workspace = ws, ['monitor-appkit-nsscreen-screens-id'] = tonumber(id) }
+      )
     end
   end
   return result
@@ -221,10 +232,10 @@ function Window_Manager:init()
       -- proceed to create
       for _, entry in ipairs(workspaces_and_monitors) do
         local workspace_index = entry.workspace
-        local monitor_id = math.floor(entry["monitor-appkit-nsscreen-screens-id"]) or nil
+        local monitor_id = math.floor(entry['monitor-appkit-nsscreen-screens-id']) or nil
 
-        local workspace = SBAR.add("item", "space." .. workspace_index, {
-          position = "left",
+        local workspace = SBAR.add('item', 'space.' .. workspace_index, {
+          position = 'left',
           icon = {
             color = COLORS.overlay1, -- Darker for unfocused icons
             highlight_color = COLORS.mauve,
@@ -237,7 +248,7 @@ function Window_Manager:init()
             padding_right = SPACE_ITEM_PADDING,
             color = COLORS.overlay0,
             highlight_color = COLORS.lavender,
-            font = "sketchybar-app-font:Regular:16.0",
+            font = 'sketchybar-app-font:Regular:16.0',
             y_offset = -1,
           },
           padding_right = PADDINGS,
@@ -250,7 +261,7 @@ function Window_Manager:init()
             corner_radius = STYLE.CORNER_RADIUS,
             drawing = true,
           },
-          click_script = "aerospace workspace " .. workspace_index,
+          click_script = 'aerospace workspace ' .. workspace_index,
           display = monitor_id,
         })
         self.spaces[workspace_index] = workspace
@@ -258,11 +269,14 @@ function Window_Manager:init()
         workspace:subscribe(self.events.focus_change, function(env)
           local focused_workspace = env.FOCUSED_WORKSPACE
           local is_focused = focused_workspace == workspace_index
-          SBAR.animate("tanh", 10, function()
+          SBAR.animate('tanh', 10, function()
             workspace:set({
               icon = { highlight = is_focused },
               label = { highlight = is_focused },
-              background = { border_color = is_focused and STYLE.FOCUSED_BORDER_COLOR or STYLE.UNFOCUSED_BORDER_COLOR },
+              background = {
+                border_color = is_focused and STYLE.FOCUSED_BORDER_COLOR
+                  or STYLE.UNFOCUSED_BORDER_COLOR,
+              },
             })
           end)
         end)
@@ -275,11 +289,11 @@ function Window_Manager:init()
 
   for _, entry in ipairs(workspaces_and_monitors) do
     local workspace_index = entry.workspace
-    local monitor_id = math.floor(entry["monitor-appkit-nsscreen-screens-id"]) or nil
+    local monitor_id = math.floor(entry['monitor-appkit-nsscreen-screens-id']) or nil
 
     -- Create synchronously to guarantee order before front_app
-    local workspace = SBAR.add("item", "space." .. workspace_index, {
-      position = "left",
+    local workspace = SBAR.add('item', 'space.' .. workspace_index, {
+      position = 'left',
       icon = {
         color = COLORS.overlay1, -- Darker for unfocused icons
         highlight_color = COLORS.mauve,
@@ -292,7 +306,7 @@ function Window_Manager:init()
         padding_right = SPACE_ITEM_PADDING,
         color = COLORS.overlay0,
         highlight_color = COLORS.lavender,
-        font = "sketchybar-app-font:Regular:16.0",
+        font = 'sketchybar-app-font:Regular:16.0',
         y_offset = -1,
       },
       padding_right = PADDINGS,
@@ -305,7 +319,7 @@ function Window_Manager:init()
         corner_radius = STYLE.CORNER_RADIUS,
         drawing = true,
       },
-      click_script = "aerospace workspace " .. workspace_index,
+      click_script = 'aerospace workspace ' .. workspace_index,
       display = monitor_id,
     })
 
@@ -315,11 +329,14 @@ function Window_Manager:init()
       local focused_workspace = env.FOCUSED_WORKSPACE
       local is_focused = focused_workspace == workspace_index
 
-      SBAR.animate("tanh", 10, function()
+      SBAR.animate('tanh', 10, function()
         workspace:set({
           icon = { highlight = is_focused },
           label = { highlight = is_focused },
-          background = { border_color = is_focused and STYLE.FOCUSED_BORDER_COLOR or STYLE.UNFOCUSED_BORDER_COLOR },
+          background = {
+            border_color = is_focused and STYLE.FOCUSED_BORDER_COLOR
+              or STYLE.UNFOCUSED_BORDER_COLOR,
+          },
         })
       end)
     end)
@@ -329,9 +346,9 @@ function Window_Manager:init()
   self:update_all_workspaces()
   self:update_workspace_monitors()
 
-  SBAR.exec("aerospace list-workspaces --focused", function(focused_workspace)
+  SBAR.exec('aerospace list-workspaces --focused', function(focused_workspace)
     if focused_workspace then
-      local focused_ws = focused_workspace:match("^%s*(.-)%s*$")
+      local focused_ws = focused_workspace:match('^%s*(.-)%s*$')
       if focused_ws and self.spaces[focused_ws] then
         self.spaces[focused_ws]:set({
           icon = { highlight = true },
@@ -345,8 +362,8 @@ end
 
 --- Start watcher for workspace changes
 function Window_Manager:start_watcher()
-  local watcher = SBAR.add("item", {
-    position = "left",
+  local watcher = SBAR.add('item', {
+    position = 'left',
     drawing = false,
     updates = true,
   })
@@ -357,7 +374,7 @@ function Window_Manager:start_watcher()
   end)
 
   -- Subscribe to display changes (monitor changes)
-  watcher:subscribe("display_change", function()
+  watcher:subscribe('display_change', function()
     self:update_workspace_monitors()
     self:update_all_workspaces()
   end)

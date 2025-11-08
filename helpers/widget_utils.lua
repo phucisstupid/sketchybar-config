@@ -29,9 +29,9 @@ end
 -- Create graph widget with common defaults
 function widget_utils.create_graph_widget(name, config)
   config = config or {}
-  return SBAR.add("graph", name, 42, {
-    position = "right",
-    updates = "when_shown", -- Only update when visible (hidden by default via toggle_stats)
+  return SBAR.add('graph', name, 42, {
+    position = 'right',
+    updates = 'when_shown', -- Only update when visible (hidden by default via toggle_stats)
     graph = { color = config.color or COLORS.blue },
     background = {
       height = 22,
@@ -40,16 +40,16 @@ function widget_utils.create_graph_widget(name, config)
       drawing = true,
     },
     icon = {
-      string = config.icon or "",
+      string = config.icon or '',
       color = config.icon_color or COLORS.text,
     },
     label = {
-      string = config.label or "??%",
+      string = config.label or '??%',
       font = {
-        style = config.font_style or FONT.style_map["Bold"],
+        style = config.font_style or FONT.style_map['Bold'],
         size = config.font_size or STYLE.FONT_SIZE_SMALL,
       },
-      align = config.label_align or "right",
+      align = config.label_align or 'right',
       padding_right = 0,
       width = 0,
       y_offset = config.y_offset or 4,

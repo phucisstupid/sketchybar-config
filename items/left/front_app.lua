@@ -1,6 +1,6 @@
-local front_app = SBAR.add("item", "front_app", {
-  position = "left",
-  display = "active",
+local front_app = SBAR.add('item', 'front_app', {
+  position = 'left',
+  display = 'active',
   updates = true,
   update_freq = 1,
   scroll_texts = false, -- Disable text scrolling, just truncate
@@ -10,7 +10,7 @@ local front_app = SBAR.add("item", "front_app", {
   },
 })
 
-local last_window_title = ""
+local last_window_title = ''
 local is_updating = false -- Prevent concurrent updates
 
 -- Optimized function to get and update window title
@@ -36,9 +36,9 @@ local function update_window_title()
     function(result)
       is_updating = false
 
-      local window_title = ""
-      if result and result ~= "" then
-        window_title = result:gsub("\n$", ""):gsub("^%s+", ""):gsub("%s+$", "")
+      local window_title = ''
+      if result and result ~= '' then
+        window_title = result:gsub('\n$', ''):gsub('^%s+', ''):gsub('%s+$', '')
       end
 
       -- Only update if title actually changed
@@ -49,7 +49,7 @@ local function update_window_title()
         front_app:set({
           label = {
             string = window_title,
-            drawing = window_title ~= "",
+            drawing = window_title ~= '',
           },
         })
       end
@@ -58,11 +58,11 @@ local function update_window_title()
 end
 
 -- Update on app switch (primary trigger - instant)
-front_app:subscribe("front_app_switched", function(env)
+front_app:subscribe('front_app_switched', function(env)
   update_window_title()
 end)
 
 -- Routine update as fallback (less frequent)
-front_app:subscribe("routine", function()
+front_app:subscribe('routine', function()
   update_window_title()
 end)

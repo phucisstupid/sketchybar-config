@@ -1,33 +1,33 @@
 local media_control = {}
 
 function media_control.next_track()
-  SBAR.exec("media-control next-track")
+  SBAR.exec('media-control next-track')
 end
 
 function media_control.prev_track()
-  SBAR.exec("media-control previous-track")
+  SBAR.exec('media-control previous-track')
 end
 
 function media_control.toggle_play()
-  SBAR.exec("media-control toggle-play-pause")
+  SBAR.exec('media-control toggle-play-pause')
 end
 
 function media_control.toggle_shuffle()
-  SBAR.exec("media-control toggle-shuffle")
+  SBAR.exec('media-control toggle-shuffle')
 end
 
 function media_control.toggle_repeat()
-  SBAR.exec("media-control toggle-repeat")
+  SBAR.exec('media-control toggle-repeat')
 end
 
 function media_control.stats(callback)
-  SBAR.exec("media-control get -h", function(result)
+  SBAR.exec('media-control get -h', function(result)
     callback(result.playing, false, false)
   end)
 end
 
 function media_control.update_current_track(callback)
-  SBAR.exec("media-control get -h", function(result)
+  SBAR.exec('media-control get -h', function(result)
     callback(result.title, result.artist, result.album)
   end)
 end

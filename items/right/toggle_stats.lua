@@ -1,17 +1,17 @@
 -- Batch event creation for better performance
-SBAR.exec("sketchybar --add event hide_stats --add event show_stats --add event toggle_stats")
+SBAR.exec('sketchybar --add event hide_stats --add event show_stats --add event toggle_stats')
 
 -- Items to control show/hide
 local stats_items = {
-  "widgets.cpu",
-  "netspeed_upload",
-  "netspeed_download",
-  "widgets.ram",
+  'widgets.cpu',
+  'netspeed_upload',
+  'netspeed_download',
+  'widgets.ram',
 }
 
 -- Create separator_right item
-local separator = SBAR.add("item", "separator_right", {
-  position = "right",
+local separator = SBAR.add('item', 'separator_right', {
+  position = 'right',
   icon = {
     string = ICONS.stats_toggle.show,
     color = COLORS.lavender, -- Lavender for toggle button
@@ -24,8 +24,8 @@ local separator = SBAR.add("item", "separator_right", {
 })
 
 -- Create hidden animator item for event handling
-local animator = SBAR.add("item", "animator", {
-  position = "right",
+local animator = SBAR.add('item', 'animator', {
+  position = 'right',
   drawing = false,
   updates = true,
 })
@@ -58,11 +58,11 @@ local function toggle_stats()
 end
 
 -- Separator click event
-separator:subscribe("mouse.clicked", function()
-  SBAR.trigger("toggle_stats")
+separator:subscribe('mouse.clicked', function()
+  SBAR.trigger('toggle_stats')
 end)
 
 -- Animator subscribe to events
-animator:subscribe("hide_stats", hide_stats)
-animator:subscribe("show_stats", show_stats)
-animator:subscribe("toggle_stats", toggle_stats)
+animator:subscribe('hide_stats', hide_stats)
+animator:subscribe('show_stats', show_stats)
+animator:subscribe('toggle_stats', toggle_stats)

@@ -1,18 +1,18 @@
 local popup_width = 150
-local volume_style = MODULES.volume.style or "both"
+local volume_style = MODULES.volume.style or 'both'
 
-local volume_icon = SBAR.add("item", "widgets.volume", {
-  position = "right",
-  icon = (volume_style ~= "text")
+local volume_icon = SBAR.add('item', 'widgets.volume', {
+  position = 'right',
+  icon = (volume_style ~= 'text')
       and {
         string = ICONS.volume._100,
-        align = "right",
+        align = 'right',
         color = COLORS.yellow, -- Yellow for audio
       }
     or { drawing = false },
-  label = (volume_style ~= "icon") and {
-    align = "right",
-    string = "0%",
+  label = (volume_style ~= 'icon') and {
+    align = 'right',
+    string = '0%',
     color = COLORS.text,
   } or { drawing = false },
 })
@@ -22,35 +22,37 @@ local schedule_hide
 
 local function volume_collapse_details()
   local query = volume_icon:query()
-  if query.popup and query.popup.drawing == "on" then
+  if query.popup and query.popup.drawing == 'on' then
     volume_icon:set({ popup = { drawing = false } })
-    SBAR.remove("/volume.device\\.*/")
+    SBAR.remove('/volume.device\\.*/')
   end
   volume_hover = false
 end
 
 schedule_hide = function()
   SBAR.delay(0.2, function()
-    if not volume_hover then volume_collapse_details() end
+    if not volume_hover then
+      volume_collapse_details()
+    end
   end)
 end
 
 local function attach_popup_hover(item)
-  item:subscribe("mouse.entered", function()
+  item:subscribe('mouse.entered', function()
     volume_hover = true
   end)
-  item:subscribe("mouse.exited", function()
+  item:subscribe('mouse.exited', function()
     volume_hover = false
     schedule_hide()
   end)
-  item:subscribe("mouse.exited.global", function()
+  item:subscribe('mouse.exited.global', function()
     volume_hover = false
     schedule_hide()
   end)
 end
 
-local volume_slider = SBAR.add("slider", popup_width, {
-  position = "popup." .. volume_icon.name,
+local volume_slider = SBAR.add('slider', popup_width, {
+  position = 'popup.' .. volume_icon.name,
   slider = {
     highlight_color = COLORS.yellow, -- Yellow for audio slider
     background = {
@@ -81,7 +83,7 @@ end
 
 -- Update volume display based on style
 local function update_volume(volume)
-  if volume_style == "icon" then
+  if volume_style == 'icon' then
     volume_icon:set({
       icon = {
         string = get_volume_icon(volume),
@@ -89,11 +91,11 @@ local function update_volume(volume)
       },
       label = { drawing = false },
     })
-  elseif volume_style == "text" then
+  elseif volume_style == 'text' then
     volume_icon:set({
       icon = { drawing = false },
       label = {
-        string = math.floor(volume) .. "%",
+        string = math.floor(volume) .. '%',
         drawing = true,
         color = COLORS.yellow, -- Match icon color for consistency
       },
@@ -105,7 +107,7 @@ local function update_volume(volume)
         drawing = true,
       },
       label = {
-        string = math.floor(volume) .. "%",
+        string = math.floor(volume) .. '%',
         drawing = true,
         color = COLORS.yellow, -- Match icon color for consistency
       },
@@ -114,35 +116,35 @@ local function update_volume(volume)
   volume_slider:set({ slider = { percentage = volume } })
 end
 
-volume_icon:subscribe("volume_change", function(env)
+volume_icon:subscribe('volume_change', function(env)
   local volume = tonumber(env.INFO)
   update_volume(volume)
 end)
 
-local current_audio_device = "None"
+local current_audio_device = 'None'
 local function volume_toggle_details(env)
-  if env.BUTTON == "right" then
-    SBAR.exec("open /System/Library/PreferencePanes/Sound.prefpane")
+  if env.BUTTON == 'right' then
+    SBAR.exec('open /System/Library/PreferencePanes/Sound.prefpane')
     return
   end
 
   local query = volume_icon:query()
-  local should_draw = not query.popup or query.popup.drawing == "off"
+  local should_draw = not query.popup or query.popup.drawing == 'off'
   if should_draw then
     volume_icon:set({ popup = { drawing = true } })
-    SBAR.exec("SwitchAudioSource -t output -c", function(result)
-      current_audio_device = result:gsub("\n$", "")
-      SBAR.exec("SwitchAudioSource -a -t output", function(available)
+    SBAR.exec('SwitchAudioSource -t output -c', function(result)
+      current_audio_device = result:gsub('\n$', '')
+      SBAR.exec('SwitchAudioSource -a -t output', function(available)
         local devices = {}
-        for device in available:gmatch("[^\r\n]+") do
+        for device in available:gmatch('[^\r\n]+') do
           table.insert(devices, device)
         end
 
         local counter = 0
         for _, device in ipairs(devices) do
           local is_current = device == current_audio_device
-          local device_item = SBAR.add("item", "volume.device." .. counter, {
-            position = "popup." .. volume_icon.name,
+          local device_item = SBAR.add('item', 'volume.device.' .. counter, {
+            position = 'popup.' .. volume_icon.name,
             width = popup_width,
             label = {
               string = device,
@@ -167,35 +169,38 @@ end
 
 local function volume_scroll(env)
   local delta = env.INFO.delta
-  if env.INFO.modifier ~= "ctrl" then
+  if env.INFO.modifier ~= 'ctrl' then
     delta = delta * 10.0
   end
   SBAR.exec(
-    string.format('osascript -e "set volume output volume (output volume of (get volume settings) + %.1f)"', delta)
+    string.format(
+      'osascript -e "set volume output volume (output volume of (get volume settings) + %.1f)"',
+      delta
+    )
   )
 end
 
 -- Initialize volume on startup
 SBAR.exec('osascript -e "output volume of (get volume settings)"', function(result)
-  local volume = tonumber(result:gsub("\n$", ""))
+  local volume = tonumber(result:gsub('\n$', ''))
   if volume then
     update_volume(volume)
   end
 end)
 
-volume_icon:subscribe("mouse.entered", function(env)
+volume_icon:subscribe('mouse.entered', function(env)
   volume_hover = true
   local query = volume_icon:query()
-  if not query.popup or query.popup.drawing == "off" then
+  if not query.popup or query.popup.drawing == 'off' then
     volume_toggle_details(env)
   end
 end)
-volume_icon:subscribe("mouse.exited", function()
+volume_icon:subscribe('mouse.exited', function()
   volume_hover = false
   schedule_hide()
 end)
-volume_icon:subscribe("mouse.exited.global", function()
+volume_icon:subscribe('mouse.exited.global', function()
   volume_hover = false
   volume_collapse_details()
 end)
-volume_icon:subscribe("mouse.scrolled", volume_scroll)
+volume_icon:subscribe('mouse.scrolled', volume_scroll)
